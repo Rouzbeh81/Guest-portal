@@ -1,5 +1,5 @@
 import React from "react";
-import { useMsal, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import { useMsal, AuthenticatedTemplate } from "@azure/msal-react";
 import { LanguageToggle } from "./LanguageToggle";
 import { LogOut, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
