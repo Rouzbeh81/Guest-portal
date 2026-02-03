@@ -1,10 +1,17 @@
 import type { Configuration, PopupRequest } from "@azure/msal-browser";
 
+const clientId = import.meta.env.VITE_AZURE_CLIENT_ID;
+const tenantId = import.meta.env.VITE_AZURE_TENANT_ID;
+
+if (!clientId) {
+  console.error("VITE_AZURE_CLIENT_ID is not defined. Please check your environment variables.");
+}
+
 // MSAL configuration
 export const msalConfig: Configuration = {
   auth: {
-    clientId: import.meta.env.VITE_AZURE_CLIENT_ID || "",
-    authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID || "common"}`,
+    clientId: clientId || "",
+    authority: `https://login.microsoftonline.com/${tenantId || "common"}`,
     redirectUri: window.location.origin,
     postLogoutRedirectUri: window.location.origin,
   },
