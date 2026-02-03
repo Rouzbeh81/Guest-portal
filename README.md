@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# Entra Guest Invite Portal
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, secure, standalone React application for frontline employees to send Entra ID Guest Invites. This portal allows non-technical staff to provide temporary access to internal SaaS applications by inviting guests directly into the company's Entra ID tenant.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Secure by Design**: Authentication handled via Microsoft SSO (MSAL.js) using delegated tokens.
+- **Pure Client-Side (SPA)**: No backend required; interacts directly with Microsoft Graph API.
+- **Multi-language Support**: Toggle between English and Dutch (Nederlands).
+- **Simplified Workflow**: Clean, minimalist, and mobile-responsive layout (Login -> Invitation Form -> Success/Result screen).
+- **Manual Redemption**: Displays the `inviteRedeemUrl` so employees can copy and send it manually if needed.
 
-## React Compiler
+## 🛠 Technical Specifications
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework**: React 19 + Vite + TypeScript
+- **Authentication**: `@azure/msal-react` and `@azure/msal-browser`
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide-react
+- **Notifications**: Sonner
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🔐 Entra ID App Registration Guide
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Follow these steps to register the application in your Entra ID tenant:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 1. Create Registration
+1. Go to the [Azure Portal](https://portal.azure.com) > **Microsoft Entra ID** > **App registrations** > **New registration**.
+2. **Name**: `Entra Guest Invite Portal`.
+3. **Supported account types**: `Accounts in this organizational directory only (Single tenant)`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Configure Platform
+1. Under **Authentication**, click **Add a platform** and select **Single-page application (SPA)**.
+2. **Redirect URIs**:
+   - For development: `http://localhost:5173`
+   - For production: Your hosting URL (e.g., `https://guest-portal.vercel.app`)
+
+### 3. API Permissions
+1. Go to **API permissions** > **Add a permission** > **Microsoft Graph** > **Delegated permissions**.
+2. Search for and add:
+   - `User.Read` (to sign the user in).
+   - `User.Invite.All` (to send invitations).
+3. **Important**: Click **Grant admin consent for [Your Tenant]** to authorize these permissions for all users.
+
+### 4. User Roles
+Ensure that the frontline employees using this portal have the **Guest Inviter** role assigned to them in Entra ID.
+
+---
+
+## ⚙️ Environment Configuration
+
+Create a `.env` file in the root directory (use `.env.example` as a template):
+
+```env
+VITE_AZURE_CLIENT_ID=your-client-id-here
+VITE_AZURE_TENANT_ID=your-tenant-id-here
+VITE_INVITE_REDIRECT_URL=https://your-target-saas-app.com
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### ⚠️ Important Note for Production (Vercel/Netlify)
+Vite inlines environment variables at **build time**. If you update environment variables in your hosting provider's dashboard, you **must redeploy** the application for the changes to take effect in the browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 💻 Local Development
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd guest-portal
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables**:
+   Copy `.env.example` to `.env` and fill in your Entra ID details.
+
+4. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+   The app will be available at `http://localhost:5173`.
+
+---
+
+## 🏗 Build and Deployment
+
+### Build for Production
+```bash
+npm run build
 ```
+The production-ready files will be in the `dist` folder.
+
+### Deploy to Vercel
+This project is optimized for Vercel. Connect your repository, add the `VITE_` environment variables in the Vercel dashboard, and deploy.
+
+## 🇳🇱 Localization
+The application defaults to **Dutch (Nederlands)**. Users can switch to **English** using the language toggle in the header. All UI elements, labels, and error messages are fully localized.
