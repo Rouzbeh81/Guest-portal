@@ -10,7 +10,6 @@ export const msalConfig: Configuration = {
   },
   cache: {
     cacheLocation: "sessionStorage", // Use sessionStorage for security as requested
-    storeAuthStateInCookie: false,
   },
 };
 
